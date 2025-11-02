@@ -55,8 +55,17 @@ app.use((err, req, res, next) => {
 });
 
 // Connect to MongoDB and start server
+const mongoUri = process.env.MONGODB_URI;
+if (!mongoUri) {
+  console.error('\nERROR: MONGODB_URI is not set.');
+  console.error('Create a .env file in the server folder (or set environment variables) with:');
+  console.error('  MONGODB_URI=mongodb://localhost:27017/mern_blog');
+  console.error('You can use the provided .env.example as a starting point.\n');
+  process.exit(1);
+}
+
 mongoose
-  .connect(process.env.MONGODB_URI)
+  .connect(mongoUri)
   .then(() => {
     console.log('Connected to MongoDB');
     app.listen(PORT, () => {

@@ -107,15 +107,22 @@ export const authService = {
   // Register a new user
   register: async (userData) => {
     const response = await api.post('/auth/register', userData);
+    // server may return { success: true, data: { user, token } }
+    const payload = response.data.data || response.data;
+    if (payload && payload.token) {
+      localStorage.setItem('token', payload.token);
+      localStorage.setItem('user', JSON.stringify(payload.user));
+    }
     return response.data;
   },
 
   // Login user
   login: async (credentials) => {
     const response = await api.post('/auth/login', credentials);
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+    const payload = response.data.data || response.data;
+    if (payload && payload.token) {
+      localStorage.setItem('token', payload.token);
+      localStorage.setItem('user', JSON.stringify(payload.user));
     }
     return response.data;
   },
